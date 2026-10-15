@@ -4,7 +4,7 @@ A machine learning model and deployed app that predicts whether a reported drug 
 
 The goal: help triage a new adverse event report at the moment it's received — before it has even been submitted to the FDA — using only information that's actually knowable at that point.
 
-Try it live: faers-drug-safety-prediction-qzf2uzzskvkryl5qfvwd7q.streamlit.app — no install needed, just open the link.
+Try it live: [faers-drug-safety-prediction-qzf2uzzskvkryl5qfvwd7q.streamlit.app](https://faers-drug-safety-prediction-8u4x3h3hc3qgobmz4bgbzs.streamlit.app/) — no install needed, just open the link.
 
 Live app
 
