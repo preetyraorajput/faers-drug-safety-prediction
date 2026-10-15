@@ -62,6 +62,8 @@ Predicting Adverse Event Seriousness A Machine Learning Approach to FDA FAERS Da
 
 Note: the raw FAERS data files (multiple GB) are not included in this repo — they're publicly available from the FDA FAERS Quarterly Data Files.
 
+Limitations: Reported accuracy is for the full 82-feature model; the app asks for 6 fields and fills the rest with training medians, so its accuracy may be lower.
+
 Disclaimer
 
 This is an educational/illustrative project, not a validated clinical tool. Predictions should never substitute for clinical judgment or official pharmacovigilance review.
