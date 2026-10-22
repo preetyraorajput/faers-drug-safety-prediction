@@ -1,5 +1,5 @@
 """
-AE Seriousness Console — real deployment app for the FAERS XGBoost model.
+AE Case Seriousness Console — real deployment app for the FAERS XGBoost model.
 
 Run with:  streamlit run app.py
 Needs, in the same folder: best_xgb_tuned_model.pkl, deployment_bundle.pkl
@@ -7,12 +7,12 @@ Needs, in the same folder: best_xgb_tuned_model.pkl, deployment_bundle.pkl
 WITHOUT reporting_delay_days, since that field isn't knowable at real triage time)
 """
 
-import streamlit as st
+import streamlit as st	
 import pandas as pd
 import numpy as np
 import joblib
 
-st.set_page_config(page_title="AE Seriousness Console", page_icon=":stethoscope:", layout="centered")
+st.set_page_config(page_title="AE Case Seriousness Console", page_icon=":stethoscope:", layout="centered")
 
 # ---------------------------------------------------------------------------
 # Styling — clean clinical look, safe to screenshot/share on GitHub
@@ -177,11 +177,11 @@ def build_feature_vector(bundle, age_years, sex, drug, reporter, n_reactions, n_
 def main():
     model, bundle = load_model_and_bundle()
 
-    st.title("AE Seriousness Console")
+    st.title("AE Case Seriousness Console")
     st.caption("FAERS case triage — predicts Serious vs. Non-Serious from report fields, at the "
                "moment a case is received, before it's submitted to FDA. Model: XGBoost (tuned). "
-               "Illustrative tool, not a substitute for clinical review.")
-
+               "Fields not asked for are filled with typical values from the training data, so "
+               "results are indicative only. Illustrative tool, not a substitute for clinical review.")
     with st.form("case_form"):
         col1, col2 = st.columns(2)
         with col1:
@@ -201,7 +201,7 @@ def main():
 
         n_reactions = st.slider("Number of reactions reported", 1, 10, 3,
                                  help="How many distinct adverse reactions were listed on this report.")
-        n_concomitant = st.slider("Concomitant drugs", 0, 12, 2,
+        n_concomitant = st.slider("Concomitant medications", 0, 12, 2,
                                    help="How many other drugs the patient was taking at the same time, "
                                         "besides the primary suspect drug.")
 
