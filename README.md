@@ -74,19 +74,19 @@ FAERS is the FDA's public database of adverse event reports. Each quarter comes 
 
 A sample of each of the seven tables, as loaded (DEMO, DRUG, REAC, OUTC, THER, INDI, RPSR):
 
-![DEMO table](images/image2.png)
+![DEMO table](image2.png)
 
-![DRUG table](images/image3.png)
+![DRUG table](image3.png)
 
-![REAC table](images/image4.png)
+![REAC table](image4.png)
 
-![OUTC table](images/image5.png)
+![OUTC table](image5.png)
 
-![THER table](images/image6.png)
+![THER table](image6.png)
 
-![INDI table](images/image7.png)
+![INDI table](image7.png)
 
-![RPSR table](images/image8.png)
+![RPSR table](image8.png)
 
 **Step 2: Remove duplicates.** A case can be reported more than once as new information arrives. Only the latest version of each case was kept, which removed 148,139 duplicate rows and left 1,469,305 unique cases.
 
@@ -103,95 +103,95 @@ A sample of each of the seven tables, as loaded (DEMO, DRUG, REAC, OUTC, THER, I
 
 Data types and missing values in the combined data:
 
-![Column data types](images/image9.png)
+![Column data types](image9.png)
 
-![Missing values per column](images/image10.png)
+![Missing values per column](image10.png)
 
 Some ages were recorded with the wrong unit (for example "DEC" meaning decades was mislabelled), which gave impossible ages. These were corrected:
 
-![Age unit mislabel](images/image11.png)
+![Age unit mislabel](image11.png)
 
 The event date was missing for 56% of cases. We checked whether the missing dates followed a pattern (by report type and by initial vs follow-up report), and added a flag "event date reported: yes/no" instead of guessing the dates:
 
-![Missing event date check](images/image12.png)
+![Missing event date check](image12.png)
 
 Value counts for sex, reporter occupation and country:
 
-![Value counts](images/image13.png)
+![Value counts](image13.png)
 
 **Step 6: Create useful new information (feature engineering).** From the raw data we built simpler measures, such as how long the patient was on the drug, how many reactions were reported, how many secondary suspect drugs and concomitant medications were listed, and whether the event date was given. Only the *counts* of reactions, indications, secondary suspect drugs and concomitant medications were used, not the specific terms.
 
 Therapy duration and reporting delay summaries (some negative values were impossible and were treated as missing):
 
-![Therapy duration and delay summary](images/image14.png)
+![Therapy duration and delay summary](image14.png)
 
 Most count columns are heavily skewed (a few cases have hundreds of drugs or reactions). Before and after applying a log transformation, which squeezes the extreme values so the model is not dominated by them:
 
-![Skew before log](images/image16.png)
+![Skew before log](image16.png)
 
-![Skew after log](images/image15.png)
+![Skew after log](image15.png)
 
 **Step 7: Explore the data.** Charts and statistics showed clear patterns. For example, cases reported by physicians were serious 75% of the time compared with 41% for cases reported by consumers. Elderly patients and follow-up reports also leaned towards Serious. No single number was strongly predictive on its own, so the model needs to combine many signals.
 
 
 **Looking at each number on its own (histogram and boxplot):**
 
-![age_years](images/image17.png)
+![age_years](image17.png)
 Age is roughly bell-shaped, with a peak around 60-70 years.
 
-![therapy_duration_days_log](images/image18.png)
+![therapy_duration_days_log](image18.png)
 Many cases report a therapy duration of zero (a spike at 0), the rest are spread out.
 
-![reporting_delay_days_log](images/image19.png)
+![reporting_delay_days_log](image19.png)
 Reporting delay has several peaks, matching the reporting cycles.
 
-![n_secondary_suspect_drugs_log](images/image20.png)
+![n_secondary_suspect_drugs_log](image20.png)
 
-![n_concomitant_drugs_log](images/image21.png)
+![n_concomitant_drugs_log](image21.png)
 
-![n_reactions_log](images/image22.png)
+![n_reactions_log](image22.png)
 
-![n_indications](images/image23.png)
+![n_indications](image23.png)
 
 Most cases have very few secondary suspect drugs, concomitant medications and reactions, while a small number have very large counts.
 
 **Do these numbers differ between Serious and Non-Serious cases? (raw values)**
 
-![age and therapy duration vs target](images/image24.png)
+![age and therapy duration vs target](image24.png)
 
-![reporting delay and secondary drugs vs target](images/image25.png)
+![reporting delay and secondary drugs vs target](image25.png)
 
-![concomitant drugs and reactions vs target](images/image26.png)
+![concomitant drugs and reactions vs target](image26.png)
 
-![indications and event year vs target](images/image27.png)
+![indications and event year vs target](image27.png)
 
 Serious cases have much longer tails: more reactions, more secondary suspect drugs, more concomitant medications and longer therapy. Number of indications and event year show weak or no signal.
 
 **Same comparison after the log transformation:**
 
-![event month and therapy duration (log) vs target](images/image28.png)
+![event month and therapy duration (log) vs target](image28.png)
 
-![reporting delay and secondary drugs (log) vs target](images/image29.png)
+![reporting delay and secondary drugs (log) vs target](image29.png)
 
-![concomitant drugs and reactions (log) vs target](images/image30.png)
+![concomitant drugs and reactions (log) vs target](image30.png)
 
 After the log transformation, longer therapy and more concomitant medications still stand out for Serious cases. The reaction count looks similar between groups once extreme values are squeezed, so the earlier signal came mostly from a small number of very large cases.
 
 **Categories:**
 
-![Category counts](images/image31.png)
+![Category counts](image31.png)
 
 More cases come from women than men, most patients are adults or elderly, consumers report the most cases, and most reports are initial reports.
 
-![Categories vs target](images/image32.png)
+![Categories vs target](image32.png)
 
-![Event date reported vs target](images/image33.png)
+![Event date reported vs target](image33.png)
 
 What stands out: physician-reported cases are 75% Serious versus 41% for consumers (the strongest category signal), elderly patients are 66% Serious, follow-up reports are 64% Serious versus 52% for initial reports, and cases with unknown sex lean Non-Serious (44% Serious).
 
 **How the numbers relate to each other (correlation heatmap):**
 
-![Correlation heatmap](images/image34.png)
+![Correlation heatmap](image34.png)
 
 No single number is strongly linked to the answer on its own (all under 0.3). The real signal comes from many features together.
 
@@ -201,7 +201,7 @@ No single number is strongly linked to the answer on its own (all under 0.3). Th
 
 To decide how many categories to keep, we checked how much of the data the most common values cover. Top 20 countries cover 96% of cases, but even the top 100 drugs cover only 48.3%, because there are 6,721 different drugs:
 
-![Top-N coverage](images/image35.png)
+![Top-N coverage](image35.png)
 
 **Step 10: Split into training and testing.** 80% of cases (1,175,444) were used to teach the model and 20% (293,861) were kept aside to test it.
 
@@ -209,15 +209,15 @@ To decide how many categories to keep, we checked how much of the data the most 
 
 First model's most important features. The two report-type flags (EXP and PER) together carried about 60% of the importance:
 
-![Importance with rept_cod](images/image37.png)
+![Importance with rept_cod](image37.png)
 
 After removing report type, country became the top clue (US alone about 45%):
 
-![Importance without rept_cod](images/image38.png)
+![Importance without rept_cod](image38.png)
 
 After removing country as well, the model relies on real case information: drug, number of secondary drugs, who reported, number of reactions and concomitant medications, age and therapy duration:
 
-![Importance clinical features only](images/image39.png)
+![Importance clinical features only](image39.png)
 
 - **Report type (expedited vs periodic):** this field is decided *after* a case is judged serious, and alone carried about 60% of the model's decisions. Removed.
 - **Country:** the US alone carried about 45% of the importance, because of how cases are reported rather than patient risk. Removed.
